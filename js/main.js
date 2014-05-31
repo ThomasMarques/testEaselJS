@@ -1,6 +1,9 @@
 /// Global variable
 var stage, level, loader;
 
+var play = true;
+var sound = true;
+
 function Case () {
     /// attributes
     this.x;
@@ -36,22 +39,41 @@ function Level () {
 
         /// Adding buttons
         var data = {
-			images:[loader.getResult("buttons")],
-			frames:{width:36, height:36},
-			animations: {play:0, pause:1, soundOn:2, soundOff:3}
-		}
+            images:[loader.getResult("buttons")],
+            frames:{width:36, height:36},
+            animations: {play:0, pause:1, soundOn:2, soundOff:3}
+        }
         // create a SpriteSheet using the data:
-	    spriteSheet = new createjs.SpriteSheet(data);
-        
+        spriteSheet = new createjs.SpriteSheet(data);
+
         /// Adding sound button
         var playButton = new createjs.Sprite(spriteSheet);
         playButton.x = this.beginX;
         playButton.y = (this.caseNumberH + 1) * this.caseHeight + this.beginY;
+        playButton.gotoAndStop("pause");
+        playButton.on("mousedown", function(e) {
+            if(play) {
+                play = false;
+                playButton.gotoAndStop("play");
+            } else {
+                play = true;
+                playButton.gotoAndStop("pause");
+            }
+        });
         stage.addChild(playButton);
-        
+
         var soundButton = playButton.clone();
         soundButton.gotoAndStop("soundOn");
         soundButton.x += this.caseNumberW * this.caseWidth;
+        soundButton.on("mousedown", function(e) {
+            if(sound) {
+                sound = false;
+                soundButton.gotoAndStop("soundOff");
+            } else {
+                sound = true;
+                soundButton.gotoAndStop("soundOn");
+            }
+        });
         stage.addChild(soundButton);
     };
 }
@@ -71,10 +93,10 @@ function init() {
         {src:"assets/tower-price.png", id:"tower-price"},
         {src:"assets/buttons.png", id:"buttons"}
     ];
-    
+
     loader = new createjs.LoadQueue(false);
-	loader.addEventListener("complete", handleComplete);
-	loader.loadManifest(manifest);
+    loader.addEventListener("complete", handleComplete);
+    loader.loadManifest(manifest);
 }
 
 /// Function called when asset are loaded.
