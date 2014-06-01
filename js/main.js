@@ -15,16 +15,22 @@ function Level () {
     /// attributes
     this.beginX = 18;
     this.beginY = 18;
-    this.caseNumberH = 14;
-    this.caseNumberW = 20;
+    this.caseNumberH = 15;
+    this.caseNumberW = 21;
     this.caseHeight = 36;
     this.caseWidth = 36;
     this.cases = [];
 
     /// methods
     this.init = function() {
-        for(var i = 0; i <= this.caseNumberW; ++i) {
-            for(var j = 0; j <= this.caseNumberH; ++j) {
+        
+        /// Drawing background
+        var background = new createjs.Shape();
+		background.graphics.beginBitmapFill(loader.getResult("background")).drawRect(0,0,800,600);
+        stage.addChild(background);
+        
+        for(var i = 0; i < this.caseNumberW; ++i) {
+            for(var j = 0; j < this.caseNumberH; ++j) {
                 var tempCase = new Case;
                 tempCase.x = i;
                 tempCase.y = j;
@@ -36,7 +42,7 @@ function Level () {
                 this.cases.push(tempCase);
             }
         }
-
+        
         /// Adding buttons
         var data = {
             images:[loader.getResult("buttons")],
@@ -49,7 +55,7 @@ function Level () {
         /// Adding sound button
         var playButton = new createjs.Sprite(spriteSheet);
         playButton.x = this.beginX;
-        playButton.y = (this.caseNumberH + 1) * this.caseHeight + this.beginY;
+        playButton.y = this.caseNumberH * this.caseHeight + this.beginY;
         playButton.gotoAndStop("pause");
         playButton.on("mousedown", function(e) {
             if(play) {
@@ -64,7 +70,7 @@ function Level () {
 
         var soundButton = playButton.clone();
         soundButton.gotoAndStop("soundOn");
-        soundButton.x += this.caseNumberW * this.caseWidth;
+        soundButton.x += (this.caseNumberW - 1) * this.caseWidth;
         soundButton.on("mousedown", function(e) {
             if(sound) {
                 sound = false;
@@ -89,9 +95,10 @@ function init() {
 
     /// Load assets
     manifest = [
+        {src:"assets/buttons.png", id:"buttons"},
+        {src:"assets/background.jpg", id:"background"},
         {src:"assets/tower.png", id:"tower"},
-        {src:"assets/tower-price.png", id:"tower-price"},
-        {src:"assets/buttons.png", id:"buttons"}
+        {src:"assets/tower-price.png", id:"tower-price"}
     ];
 
     loader = new createjs.LoadQueue(false);
